@@ -1,13 +1,14 @@
 function [hitrate, pin, tC]=hitrateLRU(lm,C,eps)
 
-tC=1;tCtmp = 0;
+Ctmp = 0;
+tC = 1;
 
-while abs(tC-tCtmp) > eps
-   tCtmp = tC;
-   tC = tC - (sum(1-exp(-lm*tC))-C);
+while abs(C-Ctmp) > eps
+   Ctmp = sum(1-exp(-lm*tC));
+   tC = tC * C/Ctmp;
 end
 pin = 1-exp(-lm*tC);
 
-hitrate = sum(lm.*pin);
+hitrate = sum(lm/sum(lm).*pin);
 
 end

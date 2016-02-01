@@ -1,7 +1,7 @@
 
-N = 100000;
-nuser = 100000;
-CISP = 1000;
+N = 1000000;
+nuser = 1000000;
+CISP = 0.01*N;
 
 alpha = 0.99;
 
@@ -9,7 +9,7 @@ pshare = 10.^(-5:0.5:0);
 
 %pshare = 10.^-3;
 
-eps = 1e-4;
+eps = 1e-5;
 
 pview = (1:N).^(-alpha);
 q = pview/sum(pview);
@@ -32,23 +32,21 @@ l(1,:) = q;
 [hitrate, pin(1,:), tC(1)]=hitrateLRU(l(1,:),Cleafs,eps);
 phit(1,:) = pin(1,:);
 
-l(2,:) = l(1,:).*(1-phit(1,:));
-%l(Nleafs+1,:) = l(Nleafs+1,:)/sum(l(Nleafs+1,:));
+l(2,:) = l(1,:).*(1-pin(1,:));
 [hitrate, pin(2,:), tC(2)]=hitrateLRU(l(2,:),CISP,eps);
 phit(2,:) = 1-exp(-l(2,:)*max(0,tC(2)-tC(1)));
 
-hitrate = (l./(sum(l,2)*ones(1,length(l))))*phit';
-hrs(:,j) = diag(hitrate);
-
 hit1(j) = l(1,:)*phit(1,:)';
-hit2(j) = l(2,:)*phit(2,:)';
+hit2(j) = l(2,:)/sum(l(2,:))*phit(2,:)';
 
-tothr = (1-cumprod(1-hrs(:,j))); %TODO
-tot(j) = tothr(end);
-tot2(j) = l(Nleafs,:)*(phit(Nleafs,:)+phit(Nleafs,:))';
+
+
+tot2(j) = l(1,:)*phit(1,:)' + l(2,:)/sum(l(2,:))*phit(2,:)';
+tot3(j) = hit1(j)+(1-hit1(j))*hit2(j);
+
+l2s(j) = sum(l(2,:));
 else
     hrs(:,j) = [1;0];
-    tot(j) = 1; tot2(j) = 1;
+    tot(j) = 1; tot2(j) = 1; tot3(j)=1;
 end
-
 end

@@ -25,7 +25,7 @@ C = par.C(j);
 hitrate(j) = hitrateLRU(q,C,1e-4);
 
 end
-figure(2);clf;box on;
+figure(3);clf;box on;
 plot(par.C,hitrate,'--','color','black','linewidth',2)
 set(gca,'xscale','log')
 xlabel('cache size C / catalouge size')
